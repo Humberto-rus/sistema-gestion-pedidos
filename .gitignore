@@ -1,0 +1,46 @@
+# ── Entorno virtual de Python ──────────────────────────────
+venv/
+.venv/
+env/
+.env/
+
+# ── Variables de entorno y secretos ────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Caché de Python ─────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# ── Cobertura de tests ──────────────────────────────────────
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# ── pytest ──────────────────────────────────────────────────
+.pytest_cache/
+.cache/
+
+# ── IDEs y editores ─────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Sistema operativo ───────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Docker ──────────────────────────────────────────────────
+.docker-compose.override.yml
+
+# ── Distribución / builds ───────────────────────────────────
+dist/
+build/
+*.egg-info/
