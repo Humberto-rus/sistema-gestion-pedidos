@@ -1,48 +1,48 @@
 from abc import ABC, abstractmethod
 
 
-# Estrategia Base
-class EstrategiaPago(ABC):
+class Pago(ABC):
+
     @abstractmethod
-    def pagar(self, monto: float) -> dict:
+    def procesar(self, monto: float) -> bool:
+        pass
+
+    @abstractmethod
+    def tipo(self) -> str:
         pass
 
 
-# Estrategia Concreta 1: Tarjeta
-class PagoTarjeta(EstrategiaPago):
-    def __init__(self, numero_tarjeta: str):
-        self.numero_tarjeta = numero_tarjeta
+class PagoTarjeta(Pago):
 
-    def pagar(self, monto: float) -> dict:
-        return {
-            "exito": True,
-            "metodo": "Tarjeta de Crédito/Débito",
-            "monto": monto,
-            "detalle": f"Pago procesado con tarjeta finalizada en {self.numero_tarjeta[-4:]}"
-        }
+    def __init__(self, numero: str):
+        self._ultimos = numero[-4:]
 
+    def procesar(self, monto: float) -> bool:
+        print(f"[TARJETA ****{self._ultimos}] Procesando ${monto:.2f}")
+        return True
 
-# Estrategia Concreta 2: PayPal
-class PagoPayPal(EstrategiaPago):
-    def __init__(self, email: str):
-        self.email = email
-
-    def pagar(self, monto: float) -> dict:
-        return {
-            "exito": True,
-            "metodo": "PayPal",
-            "monto": monto,
-            "detalle": f"Pago procesado desde la cuenta {self.email}"
-        }
+    def tipo(self):
+        return "tarjeta"
 
 
-# Contexto que utiliza la estrategia
-class ProcesadorPago:
-    def __init__(self, estrategia: EstrategiaPago):
-        self._estrategia = estrategia
+class PagoEfectivo(Pago):
 
-    def cambiar_estrategia(self, estrategia: EstrategiaPago):
-        self._estrategia = estrategia
+    def procesar(self, monto: float) -> bool:
+        print(f"[EFECTIVO] Registrando ${monto:.2f}")
+        return True
 
-    def procesar(self, monto: float) -> dict:
-        return self._estrategia.pagar(monto)
+    def tipo(self):
+        return "efectivo"
+
+
+class PagoTransferencia(Pago):
+
+    def __init__(self, cuenta: str):
+        self._cuenta = cuenta
+
+    def procesar(self, monto: float) -> bool:
+        print(f"[TRANSFERENCIA → {self._cuenta}] ${monto:.2f}")
+        return True
+
+    def tipo(self):
+        return "transferencia"

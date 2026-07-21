@@ -1,67 +1,30 @@
-from abc import ABC, abstractmethod
+class Pedido:
+    def __init__(self):
+        self.cliente   = ""
+        self.items     = []   # lista de (nombre, precio, cantidad)
+        self.direccion = ""
+        self.descuento = 0.0
+        self.notas     = ""
+        self.estado    = "pendiente"
+        self.numero    = ""
 
+    @property
+    def subtotal(self) -> float:
+        return sum(precio * cantidad for _, precio, cantidad in self.items)
 
-# Producto Base
-class Pedido(ABC):
-    def __init__(self, id_pedido: int, cliente: str):
-        self.id_pedido = id_pedido
-        self.cliente = cliente
+    @property
+    def total(self) -> float:
+        return self.subtotal * (1 - self.descuento)
 
-    @abstractmethod
-    def calcular_total(self, subtotal: float) -> float:
-        pass
-
-    @abstractmethod
-    def obtener_tipo(self) -> str:
-        pass
-
-
-# Productos Concretos
-class PedidoFisico(Pedido):
-    def __init__(self, id_pedido: int, cliente: str, costo_envio: float):
-        super().__init__(id_pedido, cliente)
-        self.costo_envio = costo_envio
-
-    def calcular_total(self, subtotal: float) -> float:
-        return subtotal + self.costo_envio
-
-    def obtener_tipo(self) -> str:
-        return "Físico"
-
-
-class PedidoDigital(Pedido):
-    def __init__(self, id_pedido: int, cliente: str, enlace_descarga: str):
-        super().__init__(id_pedido, cliente)
-        self.enlace_descarga = enlace_descarga
-
-    def calcular_total(self, subtotal: float) -> float:
-        return subtotal
-
-    def obtener_tipo(self) -> str:
-        return "Digital"
-
-
-# Creador Base (Factory)
-class CreadorPedido(ABC):
-    @abstractmethod
-    def crear_pedido(self, **kwargs) -> Pedido:
-        pass
-
-
-# Creadores Concretos
-class CreadorPedidoFisico(CreadorPedido):
-    def crear_pedido(self, **kwargs) -> Pedido:
-        return PedidoFisico(
-            id_pedido=kwargs["id_pedido"],
-            cliente=kwargs["cliente"],
-            costo_envio=kwargs.get("costo_envio", 0.0)
+    def __str__(self):
+        lineas = "\n  ".join(
+            f"{n}: ${p:.2f} x{c}" for n, p, c in self.items
         )
-
-
-class CreadorPedidoDigital(CreadorPedido):
-    def crear_pedido(self, **kwargs) -> Pedido:
-        return PedidoDigital(
-            id_pedido=kwargs["id_pedido"],
-            cliente=kwargs["cliente"],
-            enlace_descarga=kwargs.get("enlace_descarga", "")
+        return (
+            f"Pedido #{self.numero} — {self.cliente}\n"
+            f"  {lineas}\n"
+            f"  Dirección: {self.direccion}\n"
+            f"  Descuento: {self.descuento*100:.0f}%\n"
+            f"  Total: ${self.total:.2f}\n"
+            f"  Estado: {self.estado}"
         )
